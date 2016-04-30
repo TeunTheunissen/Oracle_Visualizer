@@ -1,0 +1,41 @@
+
+Activeren standaard filters
+--------------------------------------------------------------------------
+Ctrl-Toets       
+0                Procedure
+1                Function 
+2                Procedure,functions  
+3                Function,Table
+4                Package,Table
+5                Procedure,functions,tables
+6                Package         
+7                procedures,functions,package
+8                packages,Table
+9                Trigger,Table
+
+
+Filter items toevoegen/verwijderen.
+
+Ctrl toets dient voor het TO filter 
+Alt toets dient voor het Search filter
+--------------------------------------------------------------------------
+Functietoets    Ctrl/ALT           
+F1              Procedure
+F2              Function 
+F3              Package  
+F5              Trigger
+F6              Table
+F7              Sequence
+Overige functies.
+--------------------------------------------------------------------------
+Toetsen combinatie        Functie
+Alt-i                     Toon legenda
+Alt-s                     Bewaar het scherm in een bestand
+Ctrl-f                    Freeze
+Ctrl-s                    Toon alleen de geselecteerde relaties
+Ctrl-h                    Verberg objecten die niet in de selectie zitten
+Ctrl-u                    Maak de selectie ongedaan
+Ctrl-b                    Toon/verberg de tekstballonnen
+Ctrl-t                    Toon/verberg tekst
+Ctrl-l			  Toon logaritmies of lineair
+Het wildcard symbool * kan aan het begin en/of aan het einde van de zoektekst gebruikt worden.
