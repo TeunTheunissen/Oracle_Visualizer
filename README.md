@@ -13,7 +13,7 @@ https://github.com/TeunTheunissen/Oracle_Visualizer/releases
 Copy the contents of the downloaded zip file in a dir.
 ex. \My Documents\Processing\Oracle_Visualizer
 
-Open the processing software and open the file
+Open the processing software and open the file.
 \My Documents\Processing\Oracle_Visualizer\Oracle_Visualizer.pde
 
 See the wiki for more help and pictures of the sample dependencie file.
