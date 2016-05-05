@@ -9,6 +9,8 @@ import java.awt.*;
 //
 static final String  cDataFileName ="TestSet1_proc2func.csv"; 
 
+static final String cImageDir = "/image";                   //the image submap to save screenshots to. This must be a submap of the data map.
+
 int filterindex=2;                                           //choose 0 tm 9 for prefined filters which is active on startup.
 
 static final int cRestDistTo = 20;                           //no clue what the function of this one is.
@@ -935,7 +937,7 @@ void handleAltKeyOpties(int pkeyCode){
   if (pkeyCode==(int)char('S')) {
     cursor(WAIT);
     Toolkit.getDefaultToolkit().beep();
-    filename = cDataFileName.substring(0,cDataFileName.length()-4) + Integer.toString(frameCount) + ".png"; 
+    filename = "." +cImageDir +"/"+ cDataFileName.substring(0,cDataFileName.length()-4) + Integer.toString(frameCount) + ".png";  
     save(filename);
     cursor(ARROW);
   }
