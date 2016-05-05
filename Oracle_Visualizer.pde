@@ -578,7 +578,7 @@ void addEdge(String fromLabel,int fromObjectTypeID, String toLabel, int toObject
   //behandel geval 2 nieuwe nodes.
   if (to.level == 0  && from.level==0) {from.setLevel(1);  from.incLevel(0, new StringList(from.label));}
   else { // to node behoort tot een bestaande tak
-         if (to.level > from.level){
+         if (to.level >= from.level){
              from.incLevel(to.level, new StringList(from.label));
          }
   }
