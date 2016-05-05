@@ -1,5 +1,5 @@
 
-Activeren standaard filters
+Activate standard filters
 --------------------------------------------------------------------------
 Ctrl-Toets       
 0                Procedure
@@ -14,28 +14,29 @@ Ctrl-Toets
 9                Trigger,Table
 
 
-Filter items toevoegen/verwijderen.
+Add and remove items in the object type and search filter with function key's.
 
-Ctrl toets dient voor het TO filter 
-Alt toets dient voor het Search filter
+Ctrl key for the object type filter 
+Alt key for the search filter
 --------------------------------------------------------------------------
-Functietoets    Ctrl/ALT           
+Functiekey      Ctrl/ALT           
 F1              Procedure
 F2              Function 
 F3              Package  
 F5              Trigger
 F6              Table
 F7              Sequence
-Overige functies.
+
+Other functions.
 --------------------------------------------------------------------------
-Toetsen combinatie        Functie
-Alt-i                     Toon legenda
-Alt-s                     Bewaar het scherm in een bestand
-Ctrl-f                    Freeze
-Ctrl-s                    Toon alleen de geselecteerde relaties
-Ctrl-h                    Verberg objecten die niet in de selectie zitten
-Ctrl-u                    Maak de selectie ongedaan
-Ctrl-b                    Toon/verberg de tekstballonnen
-Ctrl-t                    Toon/verberg tekst
-Ctrl-l			  Toon logaritmies of lineair
-Het wildcard symbool * kan aan het begin en/of aan het einde van de zoektekst gebruikt worden.
+Key combination           Function
+Alt-i                     Show this legenda
+Alt-s                     Save the visual to a file
+Ctrl-f                    Freeze the screen
+Ctrl-s                    Show only the selected relations
+Ctrl-h                    Hide the objects not in the selection
+Ctrl-u                    Undo the selection
+Ctrl-b                    Show/hide the textballoons
+Ctrl-t                    Show/hide the text
+Ctrl-l			              Show size of object node at logarithmic or lineair scale
+The wildcard symbol * can be used at the start and or end of the search text.
