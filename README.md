@@ -1,7 +1,7 @@
 # Oracle_Visualizer
-Shows the database object dependencies graphically.
+The Oracle visualizer shows the database object dependencies graphically.
 
-This software is buid for the Processing System, a great piece of open source software to build visualizations.
+This software is build for the Processing System, a great piece of open source software to build visualizations.
 https://www.processing.org/
 
 To run the Oracle visulalizer you must download and install Processing 3.0.<br>
