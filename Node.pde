@@ -158,7 +158,7 @@ class Node {
     String txtlabel;
     float labelwidth;
     //show selected nodes(not hiden) or all nodes
-    if (flgshowall || SelectionRelated) {
+    if (flgshowall || SelectionRelated  || selected) {
         fill(nodecolor[objectTypeID]);
         stroke(0);
         strokeWeight(0.5);

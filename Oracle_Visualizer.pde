@@ -112,6 +112,7 @@ int nodeMinRelCount,nodeMaxRelCount, tablerows;
 int nodeFromMinRelCount,nodeFromMaxRelCount;
 int nodeToMinRelCount,nodeToMaxRelCount;
 int nodeMinLevel, nodeMaxLevel;
+String dataFileName;
 
 //filter variables
 String[] stndfilters = new String[10];
@@ -211,7 +212,8 @@ void settings(){
   flgCtrlF5toggle = false;
   flgCtrlF6toggle = false;
   flgCtrlF7toggle = false;
-
+// init datafilename
+dataFileName = cDataFileName;
 }
 
 /**
@@ -315,7 +317,7 @@ println("loadData()");
 Table table;
 String objname, objtype,refobjname,refobjtype;
 int fromObjtypeID, toObjtypeID;
-table = loadTable(cDataFileName, "header, csv");
+table = loadTable(dataFileName, "header, csv");
 tablerows = table.getRowCount();
   for (TableRow row : table.rows()) {
     
@@ -671,7 +673,7 @@ void drawInfoPanel(){
    textAlign(LEFT);
    text("Filename:",5,30);
    fill(255,255,255);
-   text(cDataFileName,5,40);
+   text(dataFileName,5,40);
 //rowcount   
    fill(0);
    text("Rowcount:",5,55);
@@ -838,9 +840,13 @@ void SetSelectionRelatedNodes(){
   
   //set flag for the nodes in the selection
   for (int i = 0 ; i < edgeCount ; i++) {
-    if (edges[i].to.selected || edges[i].from.selected){
-        edges[i].to.SelectionRelated = true;
+    if (edges[i].to.selected){
+        edges[i].to.SelectionRelated = false;
         edges[i].from.SelectionRelated = true;
+    }
+    if (edges[i].from.selected){
+        edges[i].to.SelectionRelated = true;
+        edges[i].from.SelectionRelated = false;
     }
   }
 }
@@ -937,9 +943,14 @@ void handleAltKeyOpties(int pkeyCode){
   if (pkeyCode==(int)char('S')) {
     cursor(WAIT);
     Toolkit.getDefaultToolkit().beep();
-    filename = "." +cImageDir +"/"+ cDataFileName.substring(0,cDataFileName.length()-4) + Integer.toString(frameCount) + ".png";  
+    filename = "." +cImageDir +"/"+ dataFileName.substring(0,dataFileName.length()-4) + Integer.toString(frameCount) + ".png";  
     save(filename);
     cursor(ARROW);
+  }
+  if (pkeyCode== (int)char('F')) {
+     flgaltkey=false;
+     //open filedialog and on ok there is a new file choosen.
+     if (handleFileOpenDialog()==JFileChooser.APPROVE_OPTION) setup();
   }
   if (pkeyCode==KeyEvent.VK_F1) {  //<>//
     filteritem = "["+cProcedure+"]";
@@ -987,10 +998,31 @@ void handleTextKey(int pkeyCode){
 };
 
 
+/**
+* This procedure opens the legenda window.
+**/
 void handleLegendDialog(){
   Legenda lgdnd = new Legenda();
   lgdnd.setVisible(true);
   //JOptionPane.showMessageDialog(frame, "Eggs are not supposed to be green.");
+}
+
+/**
+* This procedure opens the file choose dialog and updates the
+* datafilename var with the selected filename.
+**/
+int handleFileOpenDialog(){
+//Create a file chooser
+final JFileChooser fc = new JFileChooser();
+
+fc.setCurrentDirectory(new File( this.sketchPath() + "\\data"));
+int returnVal = fc.showOpenDialog(null);
+
+if (returnVal == JFileChooser.APPROVE_OPTION) {
+    File file = fc.getSelectedFile();
+    dataFileName = file.getName();
+   } //if
+   return returnVal;
 }
 
 
