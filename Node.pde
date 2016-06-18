@@ -9,6 +9,7 @@ class Node {
   boolean selected = false;
   boolean SelectionRelated=false;
   String label;
+  String labelencrypt;
   int objectTypeID;
   int count,toNodeCount,fromNodeCount;
   int level;
@@ -169,14 +170,18 @@ class Node {
         if (flgShowLabels || selected)  {
           fill(0);
           textAlign(LEFT, TOP);
-          
+          //check for encryption
+          if (flgencrypt) 
+             txtlabel = labelencrypt;
+          else txtlabel = label;
+          //add info about the nr of references.
           if (toNodeCount>0){
-              txtlabel = label+"("+toNodeCount+")"; 
+              txtlabel = txtlabel+"("+toNodeCount+")"; 
               labelwidth = textWidth(txtlabel);
             } else {
-                txtlabel = label+"("+count+")";
+                txtlabel = txtlabel+"("+count+")";
                 labelwidth = textWidth(txtlabel);
-              }
+           }
            if (flgShowLabelBckGrnd) {
               if (selected) fill(255,255,255); else fill(192,192,192);
               rect(x,y,labelwidth,16);

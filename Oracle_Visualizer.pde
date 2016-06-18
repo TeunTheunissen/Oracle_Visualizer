@@ -1,13 +1,14 @@
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.*;
+import processing.awt.PSurfaceAWT.SmoothCanvas;
 
-// Code from Visualizing Data, First Edition, Copyright 2008 Ben Fry.
+// The basis for this program is the code from Visualizing Data, First Edition, Copyright 2008 Ben Fry.
 // Based on the GraphLayout example by Sun Microsystems.
 
-//setup the program parameters.
+//setup the program parameters as constants.
 //
-static final String  cDataFileName ="TestSet1_proc2func.csv"; 
+static final String cDataFileName ="TestSet1_proc2func.csv"; // The standard datafile with example data 
 
 static final String cImageDir = "/image";                   //the image submap to save screenshots to. This must be a submap of the data map.
 
@@ -57,6 +58,31 @@ static final color selectColor = #FF3030;
 static final color fixedColor  = #FF8080;
 static final color edgeColor   = #000000;
 
+static final color cPackageBodyColor      = #B6834F; 
+static final color cProcedureColor        = #D0D0FF; 
+static final color cFunctionColor         = #31B331;  
+static final color cViewColor             = #8182AD;  
+static final color cPackageColor          = #A12416;  
+static final color cTypeColor             = #FFD49C;  
+static final color cTriggerColor          = #FF8131;  
+static final color cMaterializedViewColor = #005100; 
+static final color cTableColor            = #CFD1EA;   
+static final color cSequenceColor         = #990000;  
+
+//Init the mnemonics, used as encrypedname with a number as postfix 
+static final String cProcedurmnem         = "proc";
+static final String cFunctionmnem         = "func";
+static final String cPackagemnem          = "pack";
+static final String cTablemnem            = "tabl";
+static final String cTriggermnem          = "trig";
+static final String cSequencemnem         = "seq";
+static final String cViewmnem             = "view";
+static final String cTypemnem             = "typ";
+static final String cMaterializedViewmnem = "mview";
+static final String cPackageBodymnem      = "packb";
+
+
+//direction constants
 static final String cFrom = "F";
 static final String cTo = "T";
 static final String cNone = "";
@@ -78,7 +104,8 @@ boolean flgcntrlkey;         //indicates that the ctlr key is pressed
 boolean flgaltkey;           //indicates that the alt key is pressed
 boolean flgShowLabels;       //indicates the draw proces that the labels should be show.
 boolean flgShowLabelBckGrnd; //indicates that the background of the labels is show
-boolean flgsearchmode;       //Indicates that a serach is going on.
+boolean flgsearchmode;       //Indicates that a search is going on.
+boolean flgencrypt;          //Indicates that the names of the objects are encryped
 
 //flag indicating that the function key is pressed
 boolean flgAltF1toggle;
@@ -96,10 +123,10 @@ boolean flgCtrlF5toggle;
 boolean flgCtrlF6toggle;
 boolean flgCtrlF7toggle;
 
-
-static color[] nodecolor = new color[10];   //array with the nodecolors, indexed by node type
-static int[] bandypos = new int[10];        //the y coordinates of the bands
-static PImage[] icons = new PImage[10];     //array withe the icon images of the nodes, indexed by node type
+//init arrays
+static color[]  nodecolor = new color[10];      //array with the nodecolors, indexed by node type
+static int[]    bandypos  = new int[10];        //the y coordinates of the bands
+static PImage[] icons     = new PImage[10];     //array withe the icon images of the nodes, indexed by node type
 
 HashMap nodeTable ;    //associative array with the nodes index by nodename,node type and direcion (to/from)
 Node[] nodes ;         //array of node objects
@@ -114,12 +141,16 @@ int nodeToMinRelCount,nodeToMaxRelCount;
 int nodeMinLevel, nodeMaxLevel;
 String dataFileName;
 
+//right mouse popumenu variables
+PopUpMenu popup;
+SmoothCanvas canvas;
+
 //filter variables
 String[] stndfilters = new String[10];
 String activeStndFilter;
 String activeSrchFilter;
 
-//associative integer arrays
+//associative integer arrays presenting the hierarchical laysers in the graphics
 IntDict frombands;
 IntDict fromBandsMinx;
 IntDict fromBandsMaxx;
@@ -127,60 +158,67 @@ IntDict fromBandsMaxx;
 IntDict levelbands;
 IntDict levelBandsMinx;
 IntDict levelBandsMaxx;
+
+//associative string array holding the crypto nameas of the objects
+StringDict type2memnonic;
+
 //string to hold the types search tekst
 String searchtekst;
 Node selection; 
-
-
+//holds the text font used in the information boxes.
 PFont font;
+
 /**
-* one time only settings function executed on application start.
+* The settings function is executed on application start.
+* Here the application parameters are set.
 **/
 void settings(){
+
+  //set the system flags
   flglogscale = false;      //nodesize is lineair 
-  flgprocesdraw = false;
-  flgsearchmode = false;
+  flgprocesdraw = false;    //don't draw because the graphics system isn't initialized yet
+  flgsearchmode = false;    //the searchmode is not active.
+  flgencrypt = false;       //default the objects names are shown.
+  
   size(cformwidth, cformheight); 
-  //setup the type colors
-  flgprocesdraw = false;    //The screen should not be painted
   nodeCount = 0;
   edgeCount = 0;
   searchtekst ="";
 //init the node colors  
-  nodecolor[cPackageBodyID] = #B6834F ; 
-  nodecolor[cProcedureID] = #D0D0FF ; 
-  nodecolor[cFunctionID] = #31B331;  
-  nodecolor[cViewID] = #8182AD;  
-  nodecolor[cPackageID] = #A12416;  
-  nodecolor[cTypeID] = #FFD49C;  
-  nodecolor[cTriggerID] = #FF8131;  
-  nodecolor[cMaterializedViewID] =  #005100; 
-  nodecolor[cTableID] = #CFD1EA;   
-  nodecolor[cSequenceID] = #990000;  
+  nodecolor[cPackageBodyID]      = cPackageBodyColor; 
+  nodecolor[cProcedureID]        = cProcedureColor; 
+  nodecolor[cFunctionID]         = cFunctionColor;  
+  nodecolor[cViewID]             = cViewColor;  
+  nodecolor[cPackageID]          = cPackageColor;  
+  nodecolor[cTypeID]             = cTypeColor;  
+  nodecolor[cTriggerID]          = cTriggerColor;  
+  nodecolor[cMaterializedViewID] = cMaterializedViewColor ; 
+  nodecolor[cTableID]            = cTableColor;   
+  nodecolor[cSequenceID]         = cSequenceColor;  
 
 // setup the type band positions
-  bandypos[cPackageBodyID] = 200 ; 
-  bandypos[cProcedureID] = 300 ; 
-  bandypos[cFunctionID] = 0;  
-  bandypos[cViewID] = 450;  
-  bandypos[cPackageID] = 550;  
-  bandypos[cTypeID] = 0;  
-  bandypos[cTriggerID] = 0;  
-  bandypos[cMaterializedViewID] =  0; 
-  bandypos[cTableID] = 500;   
-  bandypos[cSequenceID] = 0 ;  
+  bandypos[cPackageBodyID]      = 200 ; 
+  bandypos[cProcedureID]        = 300 ; 
+  bandypos[cFunctionID]         = 0;  
+  bandypos[cViewID]             = 450;  
+  bandypos[cPackageID]          = 550;  
+  bandypos[cTypeID]             = 0;  
+  bandypos[cTriggerID]          = 0;  
+  bandypos[cMaterializedViewID] = 0; 
+  bandypos[cTableID]            = 500;   
+  bandypos[cSequenceID]         = 0 ;  
 
 //loading of the icons
-  icons[cPackageBodyID] = loadImage( "icons/package.gif"); 
-  icons[cProcedureID] = loadImage( "icons/procedure.gif"); 
-  icons[cFunctionID] = loadImage( "icons/function.gif"); 
-  icons[cViewID] = loadImage( "icons/view.gif"); 
-  icons[cPackageID] = loadImage( "icons/package.gif"); 
-  icons[cTypeID] = loadImage( "icons/type.gif"); 
-  icons[cTriggerID] = loadImage( "icons/trigger.gif"); 
+  icons[cPackageBodyID]      = loadImage( "icons/package.gif"); 
+  icons[cProcedureID]        = loadImage( "icons/procedure.gif"); 
+  icons[cFunctionID]         = loadImage( "icons/function.gif"); 
+  icons[cViewID]             = loadImage( "icons/view.gif"); 
+  icons[cPackageID]          = loadImage( "icons/package.gif"); 
+  icons[cTypeID]             = loadImage( "icons/type.gif"); 
+  icons[cTriggerID]          = loadImage( "icons/trigger.gif"); 
   icons[cMaterializedViewID] = loadImage( "icons/materializedview.gif"); 
-  icons[cTableID] = loadImage( "icons/table.gif"); 
-  icons[cSequenceID] = loadImage( "icons/sequence.gif"); 
+  icons[cTableID]            = loadImage( "icons/table.gif"); 
+  icons[cSequenceID]         = loadImage( "icons/sequence.gif"); 
 
 //defintion of the standard filters
   stndfilters[0]="["+cProcedure+"]";
@@ -193,6 +231,19 @@ void settings(){
   stndfilters[7]="["+cProcedure+"]["+cFunction+"]["+cPackage+"]";
   stndfilters[8]="["+cPackage+"]["+cTable+"]";
   stndfilters[9]="["+cTrigger+"]["+cTable+"]["+cSequence+"]";
+
+//definition of the mnemonics
+  type2memnonic = new StringDict();
+  type2memnonic.set(cProcedure       , cProcedurmnem);
+  type2memnonic.set(cFunction        , cFunctionmnem);
+  type2memnonic.set(cPackage         , cPackagemnem);
+  type2memnonic.set(cTable           , cTablemnem);
+  type2memnonic.set(cTrigger         , cTriggermnem);
+  type2memnonic.set(cSequence        , cSequencemnem);
+  type2memnonic.set(cView            , cViewmnem);
+  type2memnonic.set(cType            , cTypemnem);
+  type2memnonic.set(cMaterializedView, cMaterializedViewmnem);
+  type2memnonic.set(cPackageBody     , cPackageBodymnem);
 
 //init the active filter to start with
   activeStndFilter = new String(stndfilters[filterindex]);
@@ -213,8 +264,27 @@ void settings(){
   flgCtrlF6toggle = false;
   flgCtrlF7toggle = false;
 // init datafilename
-dataFileName = cDataFileName;
+  dataFileName = cDataFileName;
 }
+
+/**
+* initializes the rightmouse popup menu
+* sets the canvas variabele to the canvas or null
+* and initializes the popupmenu.
+**/
+void init_popupmenu(){
+  String clsname;
+  Object obj;
+  obj     = getSurface().getNative(); //get draw surface renderer
+  clsname = obj.getClass().getName();  //<>//
+  if (clsname.indexOf("SmoothCanvas") > 0) {
+     canvas=(SmoothCanvas) obj;
+  }  else canvas = null;
+ 
+ popup = new PopUpMenu(this);
+
+}
+
 
 /**
 * setup init settings at application runtime.
@@ -254,6 +324,10 @@ void setup() {
   flgShowLabels = true;
   flgShowLabelBckGrnd = false;
   flgprocesdraw = true;
+
+  //init the popup menu
+  init_popupmenu();
+
   println("einde setup");
 }
 
@@ -311,26 +385,38 @@ boolean filterPackageRef(String pObjName,String pObjType,String pRefObjName,Stri
   return !packCircRef;
 }
 
-
+/**
+* loads the data from the datafile and creates the edges and nodes
+* which pass the filter criteria.
+**/
 void loadData() {
 println("loadData()");
 Table table;
-String objname, objtype,refobjname,refobjtype;
-int fromObjtypeID, toObjtypeID;
+String objname, objtype,objnamecryp,refobjname,refobjtype,refobjnamecryp;
+int fromObjtypeID, toObjtypeID, encrypcounter;
 table = loadTable(dataFileName, "header, csv");
 tablerows = table.getRowCount();
+encrypcounter = 0;
+
   for (TableRow row : table.rows()) {
     
     objname = row.getString("NAME");
     objtype = row.getString("TYPE");
     refobjname = row.getString("REFERENCED_NAME");
     refobjtype = row.getString("REFERENCED_TYPE");
+//  encrypt the node names
+    objnamecryp    = type2memnonic.get(objtype) + String.valueOf(encrypcounter);
+    encrypcounter++;
+    refobjnamecryp = type2memnonic.get(refobjtype) + String.valueOf(encrypcounter);
+    encrypcounter++;
+
+//  check if the names should be encrypted
     //filter de objecttypes, indien voldoen dan opnemen in de graph
     if (filterPackageRef(objname,objtype,refobjname,refobjtype)){
         if (filter(objtype,refobjtype)) {
           fromObjtypeID = getTypeID(objtype);
           toObjtypeID = getTypeID(refobjtype);
-          addEdge(objname,fromObjtypeID, refobjname, toObjtypeID); 
+          addEdge(objname,fromObjtypeID,objnamecryp, refobjname, toObjtypeID,refobjnamecryp); 
           println("addEdge(" + objname +","+ fromObjtypeID +"," + refobjname + "," + toObjtypeID + ")");
         } //if
     } //if
@@ -361,6 +447,7 @@ void find_minmaxrelcount(){
   } //for
   //println("nodeToMaxRelCount: " + nodeToMinRelCount,"nodeToMaxRelCount: " + nodeToMaxRelCount);
 }
+
 
 void find_MinMaxNodeLevel() {
   nodeMinLevel = Integer.MAX_VALUE;
@@ -443,7 +530,9 @@ void showlevels(){
   }
 }
 
-
+/**
+* calulates the uniform string key from a numeric key value
+**/
 String strkey(int key){
   String strkey = str(key);
   return "00000".substring(strkey.length()) + strkey;  
@@ -527,13 +616,13 @@ String[] keys = levelbands.keyArray();
 
 
 
-void addEdge(String fromLabel,int fromObjectTypeID, String toLabel, int toObjectTypeID) {
+void addEdge(String fromLabel,int fromObjectTypeID,String fromLabelcryp, String toLabel, int toObjectTypeID,String toLabelcryp) {
 
   // Zoek node, indien niet bestaat dan aanmaken.
-  Node from = findNode(fromLabel,fromObjectTypeID,cFrom);
+  Node from = findNode(fromLabel,fromObjectTypeID,cFrom,fromLabelcryp);
   from.setType(fromObjectTypeID);
   
-  Node to = findNode(toLabel,toObjectTypeID,cFrom);
+  Node to = findNode(toLabel,toObjectTypeID,cFrom,toLabelcryp);
   to.setType(toObjectTypeID);
 
   //zoek de edge en indien gevonden verhoog de gebruikteller en eindig de procedure
@@ -591,19 +680,20 @@ void addEdge(String fromLabel,int fromObjectTypeID, String toLabel, int toObject
 
 
 
-Node findNode(String label, int type, String pdir) {
+Node findNode(String label, int type, String pdir, String namecryp) {
   label = label.toLowerCase();
   Node n = (Node) nodeTable.get("["+label+Integer.toString(type)+pdir+"]");
   if (n == null) {
-    return addNode(label,type,pdir);
+    return addNode(label,type,pdir,namecryp);
   }
   return n;
 }
 
 
-Node addNode(String label,int type,String pdir) {
+Node addNode(String label,int type,String pdir,String pnamecryp) {
   Node n = new Node(label);
   n.objectTypeID = type;
+  n.labelencrypt = pnamecryp; 
   if (nodeCount == nodes.length) {
     nodes = (Node[]) expand(nodes);
   }
@@ -875,9 +965,12 @@ void SetSelectionRelatedNodes(){
     }
     if (pkeyCode==(int)char('B')) flgShowLabelBckGrnd = !flgShowLabelBckGrnd;
     if (pkeyCode==(int)char('T')) flgShowLabels = !flgShowLabels;
-    if (pkeyCode==(int)char('L')) {
+    if (pkeyCode==(int)char('G')) {
         flglogscale = !flglogscale;
         setup();
+    }
+    if (pkeyCode==(int)char('E')) {
+        flgencrypt = !flgencrypt;
     }
     //handle function keys
     if (pkeyCode==KeyEvent.VK_F1) { 
@@ -1051,7 +1144,25 @@ void keyReleased(){
   if (keyCode== ALT) flgaltkey= false;
 }
 
-
+/**
+* handel de rechtermuis popupmenu af.
+**/
+void procesmenuItem(int modifier,int pkeycode){
+  //proces modifier
+  switch (modifier){
+  case CONTROL: {flgcntrlkey =true;
+                 handleCtrlKeyOpties(pkeycode);
+                 flgcntrlkey =false;
+                 break; 
+                }
+  case ALT: {flgaltkey =true;
+             handleAltKeyOpties(pkeycode);
+             flgaltkey =false;
+             break;
+            }
+  default: handleTextKey(keyCode);
+  }
+}
 
 
 
@@ -1066,15 +1177,18 @@ void mousePressed() {
       closest = d;
     }
   }
-  if (selection != null ) {
+  // if the ctrl key is pressed dont set the selected flag the node is just dragged.
     if (mouseButton == LEFT && (!flgsearchmode || (flgsearchmode && selection.SelectionRelated ))) {      //&& selection.SelectionRelated
-      selection.fixed = true;
-      selection.selected = !selection.selected;
-      SetSelectionRelatedNodes();
+      if (selection != null && !flgcntrlkey) {
+          selection.fixed = true;
+          selection.selected = !selection.selected;
+          SetSelectionRelatedNodes();
+      }
     } else if (mouseButton == RIGHT) {
-      selection.fixed = false;
+          //selection.fixed = false;
+          println("rmouse button clicked");
+          if (canvas != null)  popup.show(canvas.getComponentAt(0,0),mouseX,mouseY);
     }
-  }
 }
 
 
