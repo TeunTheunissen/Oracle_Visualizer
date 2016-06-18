@@ -1,4 +1,3 @@
-
 Activate standard filters
 --------------------------------------------------------------------------
 Ctrl-Toets       
@@ -33,6 +32,7 @@ Key combination           Function
 Alt-i                     Show this legenda
 Alt-s                     Save the visual to a file
 ALT-f                     Open a file dialog.
+Ctrl-e                    Encrypt the names of the objects.
 Ctrl-f                    Freeze the screen
 Ctrl-s                    Show only the selected relations
 Ctrl-h                    Hide the objects not in the selection
