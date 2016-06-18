@@ -1,16 +1,27 @@
 # Oracle_Visualizer
 The Oracle visualizer shows the database object dependencies graphically.
 
-This software is build for the Processing System, a great piece of open source software to build visualizations.
+This software is build on the Processing System, a great piece of open source software to build visualizations.
 https://www.processing.org/
 
-To run the Oracle visulalizer you must download and install Processing 3.0.<br>
-https://www.processing.org/download/
-
-The next step is to download the latest release of the Oracle_Visualizer.<br>
+To run the Oracle Visualizer download the Oracle_Visualizer.windows32.zip
+or Oracle_Visualizer.windows64.zip from the latest release.
 https://github.com/TeunTheunissen/Oracle_Visualizer/releases
 
-Copy the contents of the downloaded zip file in a map.<br>
+Unzip the zipfile, the files are unzipped to a map 'Oracle_visualizer.windows32' or 'Oracle_visualizer.windows64'.
+Then execute the file 'Oracle_visualizer.exe'.
+
+See the wiki for a walk through.
+https://github.com/TeunTheunissen/Oracle_Visualizer/wiki/Walk-through
+
+
+To develop on the Oracle visualizer you must download and install Processing 3.0.<br>
+https://www.processing.org/download/
+
+The next step is to download the 'source code.zip' from latest release of the Oracle_Visualizer.<br>
+https://github.com/TeunTheunissen/Oracle_Visualizer/releases
+
+Unzip the contents of the downloaded zip file in a map.<br>
 ex. \My Documents\Processing\Oracle_Visualizer
 
 Open the processing software and open the file.<br>
@@ -18,4 +29,5 @@ Open the processing software and open the file.<br>
 
 See the wiki for more help and pictures of the sample dependency file.
 
-Greetings.
+Kind regards
+Teun Theunissen.
